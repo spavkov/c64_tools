@@ -1,0 +1,389 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<title>view64 v1.60 manual</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="Description" content="view64, a C64 native image file viewer">
+<meta name="Keywords" content="view64, c64 images">
+<meta name="Author" content="Kajtar Zsolt">
+<style>
+pre {border:1px dotted #eee;background-color:#ffe;padding:2px; border-radius: 4px;}
+dt {margin-top:0.5em}
+dt + dt {margin-top:0em}
+body {width:50em;font-size:12pt;}
+h1, h2, h3, h4 {font-family:sans}
+hr {display:none}
+p, dd {text-align:justify;word-break:hypenate;}
+p + p {text-indent:3ex;margin-top:-0.5em}
+table {border-bottom:2px solid black;border-top:2px solid black;border-collapse:collapse;width:100%;margin-top:0.5em;margin-bottom:0.5em; border-spacing: 0px;}
+td, th {padding: 0px 1ex 0px 1ex;border-left:1px solid silver;border-top:1px solid silver}
+tr:nth-child(odd) {background: #fafaff;}
+td:first-child, th:first-child {border-left: 0px;}
+caption {caption-side:bottom;} 
+table.formats td:first-child {text-align: center;}
+dl.dir dt, table.formats td:first-child, code {font-family:monospace;font-size:12pt;}
+
+thead th {background-color:#eee;border-bottom:1px solid black;}
+
+@media print {
+   h1, h2, h3, h4 {page-break-after:avoid;}
+   a {text-decoration:none;color:inherit;}
+   body.body {width:auto;font-size:10pt;}
+}
+
+body { counter-reset: countcaption;}
+h1 { counter-reset: counth2; font-size: 2em; margin: 0.67em 0; }
+
+h2:before { content: counter(counth2) " "; counter-increment: counth2; min-width: 40pt;display:inline-block;}
+h2 { counter-reset: counth3; }
+h3:before { content: counter(counth2) "." counter(counth3) " "; counter-increment: counth3; min-width: 40pt;display:inline-block;}
+h3 { counter-reset: counth4; }
+h4:before { content: counter(counth2) "." counter(counth3) "." counter(counth4) " "; counter-increment: counth4; min-width: 40pt;display:inline-block;}
+caption:before { content: "Table " counter(countcaption) ": "; counter-increment: countcaption; font-weight:bold;}
+
+q { quotes: "\201C" "\201D" "\2018" "\2019"; }
+
+</style>
+</head>
+<body class="body">
+<h1>view64 v1.60 manual</h1>
+
+<p>This is the manual for view64, the C64 image file viewer. Key features:</p>
+
+<ul>
+<li>Open source, mostly portable C using FLTK/SDL2/SDL1.2 GUI
+<li>Separate library for image decoding (libview64)
+<li>Supports lot of image formats (70+)
+<li>Some image formats are recognized without extensions
+<li>PAL/NTSC S-Video and RGB rendering
+<li>Scanline, shadow mask, chroma leakage simulation
+<li>Multicolour interlace de-interlacing
+<li>view64pnm for use with netpbm and dumping to bmp
+</ul>
+
+<p>Project page: <a href="http://sourceforge.net/projects/view64/">http://sourceforge.net/projects/view64/</a></p>
+
+<p>The viewer is intended to be invoked with the filename as a parameter
+from the command line. This is usually done by associating it with the
+image file types of interest.</p>
+
+<p>The most complete GUI is the FLTK one. Please note that window
+positioning in the SDL1.2 version is incomplete due to missing interface.
+The SDL2 version might not work without proper opengl drivers.</p>
+
+<hr>
+<h2>Window keys</h2>
+<table>
+<tr><td>escape<td>Quit
+<tr><td>0<td>Default zoom level
+<tr><td>1 to 9<td>Zoom level 1&times; to 9&times;
+<tr><td>c<td>Toggle chroma noise rendering
+<tr><td>f<td>Toggle full-screen
+<tr><td>i<td>Toggle MCI deinterlacing
+<tr><td>l<td>Toggle scanlines rendering
+<tr><td>m<td>Toggle monochrome rendering
+<tr><td>n<td>Use NTSC decoder
+<tr><td>o<td>Open file
+<tr><td>p<td>Use PAL decoder
+<tr><td>r<td>Use RGB decoder
+<tr><td>s<td>Save to BMP
+<tr><td>t<td>Toggle TV mask
+<tr><td>u<td>Toggle old luminance
+<tr><td>control+m<td>Toggle menu visibility
+</table>
+<hr>
+
+<h2>Command line options</h2>
+
+<p>SDL2 redirects the standard output on certain platforms (e.g.  win32), and
+there might be no command line help available. Therefore all options are
+listed here with explanation.</p>
+
+<h3>Window options</h3>
+
+<dl class="dir">
+<dt><b>-f</b>, <b>--full-screen</b>
+<dd>Start in full screen mode
+
+<dt><b>--no-menu-bar</b>
+<dd>Start without the menu bar
+
+<dt><b>-h</b>, <b>--height</b> &lt;pixels&gt;
+<dd>Window height in pixels
+
+<dt><b>-w</b>, <b>--width</b> &lt;pixels&gt;
+<dd>Window width in pixels
+
+<dt><b>-x</b>, <b>--win-x</b> &lt;pixels&gt;
+<dd>Window horizontal middle position in pixels
+
+<dt><b>-y</b>, <b>--win-y</b> &lt;pixels&gt;
+<dd>Window vertical middle position in pixels
+
+<dt><b>-z</b>, <b>--zoom</b> &lt;level&gt;
+<dd>Zoom level, 3 for 3&times; zoom
+
+</dl>
+
+<h3>Rendering options</h3>
+
+<dl class="dir">
+<dt><b>-P</b>, <b>--pal</b>
+<dd>Use PAL decoder.
+<p>Encodes the picture into PAL chrominance and luminance signals, then decodes
+it. Correct aspect ratio is applied, a delay line is used for colour mixing and
+the horizontal colour resolution is reduced.</p>
+
+<dt><b>-N</b>, <b>--ntsc</b>
+<dd>Use NTSC decoder.
+<p>Encodes the picture into NTSC chrominance and luminance signals, then
+decodes it. Correct aspect ratio is applied and the horizontal colour resolution
+is reduced.</p>
+
+
+<dt><b>-R</b>, <b>--rgb</b>
+<dd>Use RGB decoder.
+<p>Nothing much is done, the pixels are decoded into a sharp RGB image by using
+a palette and not applying any aspect ratio. This can be used for conversion
+purposes.</p>
+
+<dt><b>-c</b>, <b>--chroma-noise</b>
+<dd>Apply part of chrominance signal to luminance signal.
+<p>This creates a slightly different pattern for different colours. Makes sense
+for PAL or NTSC rendering only of course, for the latter it results in vertical
+lines as there's no phase reversing.</p>
+
+<dt><b>-i</b>, <b>--mci-deinterlace</b>
+<dd>Deinterlacing of multicolour interlace images into high resolution images.
+<p>This option creates fake high resolution images for conversion purposes. Makes
+sense for RGB mode only.</p>
+
+<dt><b>-p</b>, <b>--palette</b> &lt;file&gt;
+<dd>Load a custom VPL palette file for RGB mode. It's not used for PAL/NTSC
+mode.  <p>The VICE palette format is simple, it contains 16 lines of 4
+hexadecimal values for red, green, blue and intensity separated by white space.
+Only the first 3 are used, and these should be in the range <code>00</code>&ndash;<code>FF</code>. Intensity is
+in the range of <code>0</code>&ndash;<code>F</code>. Intensity is ignored, but it must be present. Comments starting
+with <q>#</q>.</p>
+
+<dt><b>-l</b>, <b>--scanlines</b>
+<dd>Draw scan lines
+<p>Scan lines are a CRT <q>feature</q>, where each line is drawn with electron
+beams. The intensity of pixel rows is not uniform and is decreasing from the
+center. Also there might be a slight overlap or gap between scanlines depending on
+the intensity and density. Makes more sense on higher resolutions.</p>
+
+<dt><b>-t</b>, <b>--tv-mask</b>
+<dd>Draw shadow mask
+<p>These are the RGB triplet stripes found on many CRT TVs forming a distinctive pattern.</p>
+
+<dt><b>-m</b>, <b>--monochrome</b>
+<dd>Do not apply colours.
+<p>Renders without colours.</p>
+
+<dt><b>-u</b>, <b>--old-luma</b>
+<dd>Use old luminance
+<p>Use luminance from the old revision of VIC-II.</p>
+</dl>
+
+<h3>Other options</h3>
+
+<dl class="dir">
+<dt><b>-s</b>, <b>--save</b>
+<dd>Save the image into a BMP file.
+<p>No window is opened, so it's ideal for batch conversion mode.</p>
+
+<dt><b>-?</b>, <b>--help</b>
+<dd>Give this help list. Prints help about command line options.
+
+<dt><b>--help-formats</b>
+<dd>Lists known image formats
+
+<dt><b>--help-keys</b>
+<dd>Lists window keys
+
+<dt><b>--usage</b>
+<dd>Give a short usage message. Prints short help about command line options.
+
+<dt><b>-V</b>, <b>--version</b>
+<dd>Print program version
+</dl>
+
+<hr>
+<h2>Config file options</h2>
+
+<p>An ini style config file is used with a single <q>[view64]</q> section. The
+location is <q>~/.config/view64.conf</q> on Linux and <q>%APPDATA%\view64.ini</q> on
+Windows. Patches for other systems are welcome.</p>
+
+<dl class="dir">
+<dt><b>x</b>=<i>&lt;pixels&gt;</i>
+<dd>See <i>--win-x</i> command line option.
+
+<dt><b>y</b>=<i>&lt;pixels&gt;</i>
+<dd>See <i>--win-y</i> command line option.
+
+<dt><b>width</b>=<i>&lt;pixels&gt;</i>
+<dd>See <i>--width</i> command line option.
+
+<dt><b>height</b>=<i>&lt;pixels&gt;</i>
+<dd>See <i>--height</i> command line option.
+
+<dt><b>zoom</b>=<i>&lt;integer&gt;</i>
+<dd>See <i>--zoom</i> command line option.
+
+<dt><b>full-screen</b>=<i>&lt;0/1&gt;</i>
+<dd>See <i>--full-screen</i> command line option.
+
+<dt><b>menu-bar</b>=<i>&lt;0/1&gt;</i>
+<dd>See <i>--no-menu-bar</i> command line option.
+
+<dt><b>chroma-noise</b>=<i>&lt;0/1&gt;</i>
+<dd>See <i>--chroma-noise</i> command line option.
+
+<dt><b>mci-deinterlace</b>=<i>&lt;0/1&gt;</i>
+<dd>See <i>--mci-deinterlace</i> command line option.
+
+<dt><b>scanlines</b>=<i>&lt;0/1&gt;</i>
+<dd>See <i>--scanlines</i> command line option.
+
+<dt><b>tv-mask</b>=<i>&lt;0/1&gt;</i>
+<dd>See <i>--tv-mask</i> command line option.
+
+<dt><b>monochrome</b>=<i>&lt;0/1&gt;</i>
+<dd>See <i>--monochrome</i> command line option.
+
+<dt><b>old-luma</b>=<i>&lt;0/1&gt;</i>
+<dd>See <i>--old-luma</i> command line option.
+
+<dt><b>decoder</b>=<i>&lt;pal/ntsc/rgb&gt;</i>
+<dd>See <i>--pal</i>, <i>--ntsc</i> and <i>--rgb</i> command line options.
+
+<dt><b>palette</b>=<i>&lt;full path&gt;</i>
+<dd>See <i>--palette</i> command line option.
+</dl>
+
+<p>A sample config file:</p>
+
+<pre>
+[view64]
+x=0
+y=0
+width=0
+height=0
+zoom=0
+full-screen=0
+menu-bar=1
+chroma-noise=0
+mci-deinterlace=0
+scanlines=0
+tv-mask=0
+monochrome=0
+old-luma=0
+palette=
+decoder=pal
+</pre>
+
+<hr>
+<h2>Supported formats</h2>
+<table class="formats">
+<tr><th>Extension<th>Software<th>Packing
+<tr><td>hpi<td>Art Studio v1.1<td>
+<tr><td>mpi<td>Art Studio v1.2b<td>
+<tr><td>mwi<td>Art Studio v1.2b window<td>
+<tr><td>drl<td>Draz-lace v1.0<td>Packed/Unpacked
+<tr><td>ifl<td>Gunpaint IFLI<td>
+<tr><td>afl<td>AFLI-editor v2.1<td>
+<tr><td>him<td>Hires manager v1.0<td>Packed/Unpacked
+<tr><td>eci<td>ECIgraphic-editor v1.0<td>Packed/Unpacked
+<tr><td>fli<td>Fli designer v2.0<td>
+<tr><td>flp<td>Fli Profi v1.0<td>
+<tr><td>flg<td>Fli Graph v2.2<td>Packed/Unpacked
+<tr><td>fbi<td>Flip v1.33<td>
+<tr><td>fun<td>Funpaint II<td>Packed/Unpacked
+<tr><td>pp<td>Pixel perfect<td>Packed/Unpacked
+<tr><td>hcb<td>HCB-editor v0.05<td>
+<tr><td>drp<td>Drazpaint v1.3/1.5/2.0<td>Packed/Unpacked
+<tr><td>kla<td>Koala painter<td>Packed/Unpacked
+<tr><td>fcp<td>Face-painter v1.0<td>
+<tr><td>ami<td>Amica paint 1.0<td>
+<tr><td>bpl<td>Blazing Paddles<td>
+<tr><td>che<td>Cheese paint V2<td>
+<tr><td>cwg<td>Create with Garfield<td>
+<tr><td>dol<td>Dolphin Ed<td>
+<tr><td>mil<td>Micro illustrator<td>Packed/Unpacked
+<tr><td>shf<td>Super Hires Fli editor v1.0<td>Packed/Unpacked
+<tr><td>shi<td>Super Hires Interlace editor v1.3<td>Packed/Unpacked
+<tr><td>esh<td>Extend Super Hires Interlace editor<td>Packed/Unpacked
+<tr><td>ufl<td>UFLI-editor v1.0/v2.0<td>Packed/Unpacked
+<tr><td>uif<td>UIFLI-editor v1.0<td>Packed/Unpacked
+<tr><td>shx<td>SHF-XL edit v1.0<td>Packed/Unpacked
+<tr><td>xfl<td>X-FLI editor v2.1<td>Packed/Unpacked
+<tr><td>muf<td>MUFLI editor v1.0<td>Packed/Unpacked
+<tr><td>mui<td>MUIFLI editor v0.2<td>
+<tr><td>nuf<td>NUFLI editor v1.0<td>Packed/Unpacked
+<tr><td>sif<td>Super Hires Interlace Fli editor v1.0<td>
+<tr><td>ish<td>Image System hires<td>
+<tr><td>ism<td>Image System multi<td>
+<tr><td>mci<td>Truepaint I<td>Packed/Unpacked
+<tr><td>cdu<td>CDU Paint<td>
+<tr><td>hfd<td>Hires FLI Design<td>
+<tr><td>ddp<td>Doodle paint<td>Packed/Unpacked
+<tr><td>vid<td>Vidcom 64<td>
+<tr><td>lre<td>Interpaint 1.0 multi<td>
+<tr><td>hre<td>Interpaint 1.0 hires<td>
+<tr><td>a64<td>Artist 64<td>
+<tr><td>sar<td>Saracen paint<td>
+<tr><td>hed<td>Hi-eddi<td>
+<tr><td>pmg<td>Paint magic, Paint magic+<td>
+<tr><td>zom<td>Zoomatic<td>
+<tr><td>hie<td>Hires interlace editor v1.0<td>
+<tr><td>het<td>Hires-editor v1.0<td>
+<tr><td>fed<td>FLI editor/Saga<td>
+<tr><td>flm<td>Flimatic v3.7<td>Packed/Unpacked
+<tr><td>sh1<td>Super-hires editor I<td>Packed/Unpacked
+<tr><td>sh2<td>Super-hires editor II<td>Packed/Unpacked
+<tr><td>she<td>Super hires editor<td>
+<tr><td>she<td>Super hires editor 2<td>
+<tr><td>gig<td>Giga paint 1.2 hires/multi<td>
+<tr><td>emc<td>EMC-editor<td>
+<tr><td>hle<td>Hireslace editor v1.5<td>
+<tr><td>shs<td>Super hires studio<td>
+<tr><td>wig<td>Wigmore artist<td>
+<tr><td>4bt<td>4 bit GoDot<td>Packed/Unpacked
+<tr><td>clp<td>4 bit GoDot clip<td>Packed/Unpacked
+<tr><td>vbm<td>VBM bitmap v2/v3<td>Packed/Unpacked
+<tr><td>rp<td>Rainbow painter<td>
+<tr><td>rpm<td>Run paint multi<td>
+<tr><td>rph<td>Run paint hires<td>
+<tr><td>rpo<td>Run paint mono<td>
+<tr><td>ish<td>Interlace-Super-Hires Painter v1.0<td>
+<tr><td>p64<td>Picasso 64<td>
+<tr><td>fly<td>Flying colors<td>
+<tr><td>lp3<td>Logo-Painter V3/V3+<td>
+<tr><td>cle<td>Centauri logo-editor V1.2/V1.3<td>
+<tr><td>ile<td>Interlaced logo editor V1.01<td>
+<tr><td>ffl<td>Converted, Flash FLI<td>
+<tr><td>bfl<td>Converted, Big FLI<td>
+<tr><td>ctm<td>Charpad CTM v1-v5<td>
+<tr><td>spd<td>Spritepad SPD<td>
+</table>
+
+<hr>
+<h2>Credits</h2>
+
+<p>Soci/Singular since the 1995 DOS version.</p>
+
+<p>Additional code: my_getopt command-line argument parser by Benjamin
+Sittler.</p>
+
+<p>Baracuda to dig up some unsupported formats and gave improvement suggestions.</p>
+
+<p>cfgpath.h by Adam Nielsen.</p>
+
+<p>ini.h by Brush Technology.</p>
+
+<p>Main developer and maintainer: soci at c64.rulez.org</p>
+
+</body></html>
+

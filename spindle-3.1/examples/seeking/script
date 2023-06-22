@@ -1,0 +1,24 @@
+# This is an example script bundled with Spindle
+# https://linusakesson.net/software/spindle/
+
+jukebox.prg
+
+00:
+
+A_Computer_in_My_Backpack.sid		1000	7e
+A_Computer_in_My_Backpack.sid		4000	16	+32
+
+01:
+
+King_Fisher_0x28.sid			1000	7e
+King_Fisher_0x28.sid			4000	16	+32
+
+02:
+
+To_Die_For.sid				1000	7e
+To_Die_For.sid				4000	16	+32
+
+03:
+
+Your_Heptacular_Eyes.sid		1000	7e
+Your_Heptacular_Eyes.sid		4000	16	+32

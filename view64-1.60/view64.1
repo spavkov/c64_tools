@@ -1,0 +1,118 @@
+.TH view64 1 "August 22 2017" "view64 1.60" "view64 1.60"
+.SH NAME
+view64 \- A C64 image file viewer
+.SH SYNOPSIS
+.B view64
+[\fIOPTION\fR]... [\fIFILE\fR]...
+.SH DESCRIPTION
+.LP
+View64 displays C64 image files and is intended to be invoked with the
+filename as a parameter from the command line. This is usually done by
+associating it with the image file types of interest.
+.SH OPTIONS
+.sp 1
+.TP 0.5i
+\fB-f\fR, \fB--full-screen\fR
+Start in full screen mode 
+.TP 0.5i
+\fB--no-menu-bar\fR
+Start without the menu bar 
+.TP 0.5i
+\fB-h\fR, \fB--height\fR \fIpixels\fR
+Window height in pixels
+.TP 0.5i
+\fB-w\fR, \fB--width\fR \fIpixels\fR
+Window width in pixels 
+.TP 0.5i
+\fB-x\fR, \fB--win-x\fR \fIpixels\fR
+Window horizontal middle position in pixels 
+.TP 0.5i
+\fB-y\fR, \fB--win-y\fR \fIpixels\fR
+Window vertical middle position in pixels
+.TP 0.5i
+\fB-z\fR, \fB--zoom\fR \fIlevel\fR
+Zoom level, 3 for 3x zoom 
+.TP 0.5i
+\fB-P\fR, \fB--pal\fR
+Use PAL decoder.
+Encodes the picture into PAL chrominance and luminance signals, then decodes
+it. Correct aspect ratio is applied, a delay line is used for colour mixing and
+the horizontal colour resolution is reduced.
+.TP 0.5i
+\fB-N\fR, \fB--ntsc\fR
+Use NTSC decoder.
+Encodes the picture into NTSC chrominance and luminance signals, then decodes
+it. Correct aspect ratio is applied and the horizontal colour resolution is
+reduced.
+.TP 0.5i
+\fB-R\fR, \fB--rgb\fR
+Use RGB decoder.
+Nothing much is done, the pixels are decoded into a sharp RGB image by using a
+palette and not applying any aspect ratio. This can be used for conversion
+purposes.
+.TP 0.5i
+\fB-c\fR, \fB--chroma-noise\fR
+Apply part of chrominance signal to luminance signal.
+This creates a slightly different pattern for different colours. Makes sense
+for PAL or NTSC rendering only of course, for the latter it results in vertical
+lines as there's no phase reversing.
+.TP 0.5i
+\fB-i\fR, \fB--mci-deinterlace\fR
+Deinterlacing of multicolour interlace images into high resolution images.
+This option creates fake high resolution images for conversion purposes. Makes
+sense for RGB mode only.
+.TP 0.5i
+\fB-p\fR, \fB--palette\fR \fIfile\fR
+Load a custom VPL palette file for RGB mode. It's not used for PAL/NTSC mode.
+The VICE palette format is simple, it contains 16 lines of 4 hexadecimal values
+for red, green, blue and intensity separated by white space. Only the first 3
+are used, and these should be in the range 00-FF. Intensity is in the range of
+0-F. Intensity is ignored, but it must be present. Comments starting with "#".
+.TP 0.5i
+\fB-l\fR, \fB--scanlines\fR
+Draw scan lines
+Scan lines are a CRT "feature", where each line is drawn with electron beams.
+The intensity of pixel rows is not uniform and is decreasing from the center.
+Also there might be a slight overlap or gap between scanlines depending on the
+intensity and density. Makes more sense on higher resolutions.
+.TP 0.5i
+\fB-t\fR, \fB--tv-mask\fR
+Draw shadow mask
+These are the RGB triplet stripes found on many CRT TVs forming a distinctive
+pattern.
+.TP 0.5i
+\fB-m\fR, \fB--monochrome\fR
+Renders without colours.
+.TP 0.5i
+\fB-s\fR, \fB--save\fR
+Save the image into a BMP file.
+No window is opened, so it's ideal for batch conversion mode.
+.TP 0.5i
+\fB-?\fR, \fB--help\fR
+Give this help list. Prints help about command line options. 
+.TP 0.5i
+\fB--help-formats\fR
+Lists known image formats 
+.TP 0.5i
+\fB--help-keys\fR
+Lists window keys 
+.TP 0.5i
+\fB--usage\fR
+Give a short usage message. Prints short help about command line options. 
+.TP 0.5i
+\fB-V\fR, \fB--version\fR
+Print program version 
+.SH "EXIT STATUS"
+Normally the exit status is 0 if no error occured.
+.SH AUTHOR
+Written by Zsolt Kajtar.
+.SH "REPORTING BUGS"
+Online bug tracker: <http://sourceforge.net/p/view64/bugs/>
+.SH COPYRIGHT
+Copyright \(co 1995-2017 Zsolt Kajtar.
+License GPLv2+: GNU GPL version 2 or later <http://gnu.org/licenses/gpl.html>.
+.br
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+.SH "SEE ALSO"
+Full documentation at: <http://view64.sourceforge.net/>

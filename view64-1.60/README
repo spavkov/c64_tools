@@ -1,0 +1,317 @@
+view64 v1.60 manual
+
+This is the manual for view64, the C64 image file viewer. Key features:
+
+  * Open source, mostly portable C using FLTK/SDL2/SDL1.2 GUI
+  * Separate library for image decoding (libview64)
+  * Supports lot of image formats (70+)
+  * Some image formats are recognized without extensions
+  * PAL/NTSC S-Video and RGB rendering
+  * Scanline, shadow mask, chroma leakage simulation
+  * Multicolour interlace de-interlacing
+  * view64pnm for use with netpbm and dumping to bmp
+
+Project page: http://sourceforge.net/projects/view64/
+
+The viewer is intended to be invoked with the filename as a parameter from the
+command line. This is usually done by associating it with the image file types
+of interest.
+
+The most complete GUI is the FLTK one. Please note that window positioning in
+the SDL1.2 version is incomplete due to missing interface. The SDL2 version
+might not work without proper opengl drivers.
+
+-------------------------------------------------------------------------------
+
+Window keys
+
+escape    Quit
+0         Default zoom level
+1 to 9    Zoom level 1x to 9x
+c         Toggle chroma noise rendering
+f         Toggle full-screen
+i         Toggle MCI deinterlacing
+l         Toggle scanlines rendering
+m         Toggle monochrome rendering
+n         Use NTSC decoder
+o         Open file
+p         Use PAL decoder
+r         Use RGB decoder
+s         Save to BMP
+t         Toggle TV mask
+u         Toggle old luminance
+control+m Toggle menu visibility
+
+-------------------------------------------------------------------------------
+
+Command line options
+
+SDL2 redirects the standard output on certain platforms (e.g. win32), and there
+might be no command line help available. Therefore all options are listed here
+with explanation.
+
+Window options
+
+-f, --full-screen
+    Start in full screen mode
+--no-menu-bar
+    Start without the menu bar
+-h, --height <pixels>
+    Window height in pixels
+-w, --width <pixels>
+    Window width in pixels
+-x, --win-x <pixels>
+    Window horizontal middle position in pixels
+-y, --win-y <pixels>
+    Window vertical middle position in pixels
+-z, --zoom <level>
+    Zoom level, 3 for 3x zoom
+
+Rendering options
+
+-P, --pal
+    Use PAL decoder.
+
+    Encodes the picture into PAL chrominance and luminance signals, then
+    decodes it. Correct aspect ratio is applied, a delay line is used for
+    colour mixing and the horizontal colour resolution is reduced.
+
+-N, --ntsc
+    Use NTSC decoder.
+
+    Encodes the picture into NTSC chrominance and luminance signals, then
+    decodes it. Correct aspect ratio is applied and the horizontal colour
+    resolution is reduced.
+
+-R, --rgb
+    Use RGB decoder.
+
+    Nothing much is done, the pixels are decoded into a sharp RGB image by
+    using a palette and not applying any aspect ratio. This can be used for
+    conversion purposes.
+
+-c, --chroma-noise
+    Apply part of chrominance signal to luminance signal.
+
+    This creates a slightly different pattern for different colours. Makes
+    sense for PAL or NTSC rendering only of course, for the latter it results
+    in vertical lines as there's no phase reversing.
+
+-i, --mci-deinterlace
+    Deinterlacing of multicolour interlace images into high resolution images.
+
+    This option creates fake high resolution images for conversion purposes.
+    Makes sense for RGB mode only.
+
+-p, --palette <file>
+    Load a custom VPL palette file for RGB mode. It's not used for PAL/NTSC
+    mode.
+
+    The VICE palette format is simple, it contains 16 lines of 4 hexadecimal
+    values for red, green, blue and intensity separated by white space. Only
+    the first 3 are used, and these should be in the range 00-FF. Intensity is
+    in the range of 0-F. Intensity is ignored, but it must be present. Comments
+    starting with `#'.
+
+-l, --scanlines
+    Draw scan lines
+
+    Scan lines are a CRT `feature', where each line is drawn with electron
+    beams. The intensity of pixel rows is not uniform and is decreasing from
+    the center. Also there might be a slight overlap or gap between scanlines
+    depending on the intensity and density. Makes more sense on higher
+    resolutions.
+
+-t, --tv-mask
+    Draw shadow mask
+
+    These are the RGB triplet stripes found on many CRT TVs forming a
+    distinctive pattern.
+
+-m, --monochrome
+    Do not apply colours.
+
+    Renders without colours.
+
+-u, --old-luma
+    Use old luminance
+
+    Use luminance from the old revision of VIC-II.
+
+Other options
+
+-s, --save
+    Save the image into a BMP file.
+
+    No window is opened, so it's ideal for batch conversion mode.
+
+-?, --help
+    Give this help list. Prints help about command line options.
+--help-formats
+    Lists known image formats
+--help-keys
+    Lists window keys
+--usage
+    Give a short usage message. Prints short help about command line options.
+-V, --version
+    Print program version
+
+-------------------------------------------------------------------------------
+
+Config file options
+
+An ini style config file is used with a single `[view64]' section. The location
+is `~/.config/view64.conf' on Linux and `%APPDATA%\view64.ini' on Windows.
+Patches for other systems are welcome.
+
+x=<pixels>
+    See --win-x command line option.
+y=<pixels>
+    See --win-y command line option.
+width=<pixels>
+    See --width command line option.
+height=<pixels>
+    See --height command line option.
+zoom=<integer>
+    See --zoom command line option.
+full-screen=<0/1>
+    See --full-screen command line option.
+menu-bar=<0/1>
+    See --no-menu-bar command line option.
+chroma-noise=<0/1>
+    See --chroma-noise command line option.
+mci-deinterlace=<0/1>
+    See --mci-deinterlace command line option.
+scanlines=<0/1>
+    See --scanlines command line option.
+tv-mask=<0/1>
+    See --tv-mask command line option.
+monochrome=<0/1>
+    See --monochrome command line option.
+old-luma=<0/1>
+    See --old-luma command line option.
+decoder=<pal/ntsc/rgb>
+    See --pal, --ntsc and --rgb command line options.
+palette=<full path>
+    See --palette command line option.
+
+A sample config file:
+
+[view64]
+x=0
+y=0
+width=0
+height=0
+zoom=0
+full-screen=0
+menu-bar=1
+chroma-noise=0
+mci-deinterlace=0
+scanlines=0
+tv-mask=0
+monochrome=0
+old-luma=0
+palette=
+decoder=pal
+
+-------------------------------------------------------------------------------
+
+Supported formats
+
+Extension               Software                    Packing
+hpi       Art Studio v1.1
+mpi       Art Studio v1.2b
+mwi       Art Studio v1.2b window
+drl       Draz-lace v1.0                        Packed/Unpacked
+ifl       Gunpaint IFLI
+afl       AFLI-editor v2.1
+him       Hires manager v1.0                    Packed/Unpacked
+eci       ECIgraphic-editor v1.0                Packed/Unpacked
+fli       Fli designer v2.0
+flp       Fli Profi v1.0
+flg       Fli Graph v2.2                        Packed/Unpacked
+fbi       Flip v1.33
+fun       Funpaint II                           Packed/Unpacked
+pp        Pixel perfect                         Packed/Unpacked
+hcb       HCB-editor v0.05
+drp       Drazpaint v1.3/1.5/2.0                Packed/Unpacked
+kla       Koala painter                         Packed/Unpacked
+fcp       Face-painter v1.0
+ami       Amica paint 1.0
+bpl       Blazing Paddles
+che       Cheese paint V2
+cwg       Create with Garfield
+dol       Dolphin Ed
+mil       Micro illustrator                     Packed/Unpacked
+shf       Super Hires Fli editor v1.0           Packed/Unpacked
+shi       Super Hires Interlace editor v1.3     Packed/Unpacked
+esh       Extend Super Hires Interlace editor   Packed/Unpacked
+ufl       UFLI-editor v1.0/v2.0                 Packed/Unpacked
+uif       UIFLI-editor v1.0                     Packed/Unpacked
+shx       SHF-XL edit v1.0                      Packed/Unpacked
+xfl       X-FLI editor v2.1                     Packed/Unpacked
+muf       MUFLI editor v1.0                     Packed/Unpacked
+mui       MUIFLI editor v0.2
+nuf       NUFLI editor v1.0                     Packed/Unpacked
+sif       Super Hires Interlace Fli editor v1.0
+ish       Image System hires
+ism       Image System multi
+mci       Truepaint I                           Packed/Unpacked
+cdu       CDU Paint
+hfd       Hires FLI Design
+ddp       Doodle paint                          Packed/Unpacked
+vid       Vidcom 64
+lre       Interpaint 1.0 multi
+hre       Interpaint 1.0 hires
+a64       Artist 64
+sar       Saracen paint
+hed       Hi-eddi
+pmg       Paint magic, Paint magic+
+zom       Zoomatic
+hie       Hires interlace editor v1.0
+het       Hires-editor v1.0
+fed       FLI editor/Saga
+flm       Flimatic v3.7                         Packed/Unpacked
+sh1       Super-hires editor I                  Packed/Unpacked
+sh2       Super-hires editor II                 Packed/Unpacked
+she       Super hires editor
+she       Super hires editor 2
+gig       Giga paint 1.2 hires/multi
+emc       EMC-editor
+hle       Hireslace editor v1.5
+shs       Super hires studio
+wig       Wigmore artist
+4bt       4 bit GoDot                           Packed/Unpacked
+clp       4 bit GoDot clip                      Packed/Unpacked
+vbm       VBM bitmap v2/v3                      Packed/Unpacked
+rp        Rainbow painter
+rpm       Run paint multi
+rph       Run paint hires
+rpo       Run paint mono
+ish       Interlace-Super-Hires Painter v1.0
+p64       Picasso 64
+fly       Flying colors
+lp3       Logo-Painter V3/V3+
+cle       Centauri logo-editor V1.2/V1.3
+ile       Interlaced logo editor V1.01
+ffl       Converted, Flash FLI
+bfl       Converted, Big FLI
+ctm       Charpad CTM v1-v5
+spd       Spritepad SPD
+
+-------------------------------------------------------------------------------
+
+Credits
+
+Soci/Singular since the 1995 DOS version.
+
+Additional code: my_getopt command-line argument parser by Benjamin Sittler.
+
+Baracuda to dig up some unsupported formats and gave improvement suggestions.
+
+cfgpath.h by Adam Nielsen.
+
+ini.h by Brush Technology.
+
+Main developer and maintainer: soci at c64.rulez.org
+

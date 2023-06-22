@@ -1,0 +1,151 @@
+
+  Б              А                           А              Б
+  лА             ллБ                       Влл             Ал
+  лл             ллллВБ                 БВлллл             лл
+  ллл            лллллллВ             Вллллллл            ллл
+  лллВ           лллллллллВБ       БВллллллллл           Вллл
+  ллллБ          ллллллллллллВ   Влллллллллллл          Влллл
+  лллллБ         ллллллллллллллВлллллллллллллл         Бллллл
+  ллллллА        ллллллллллллВ   Влллллллллллл        Алллллл
+  ллллллл        лллллллллВБ       БВллллллллл        ллллллл
+  лллллллл       ллллллВВ             ВВлллллл       лллллллл
+  ллллллллл      ллллБА                 АБлллл      ллллллллл
+  лллллллллВ     ллБ                       Влл     Вллллллллл
+  ллллллллллБ    А            млм            А    Блллллллллл
+  лллллллллллА               ллллл               Аллллллллллл
+  лллллллллллл                плп                лллллллллллл
+  ллллллллллллл                                 ллллллллллллл
+  лллллллллллллл                               лллллллллллллл
+  ллллллллллллллл                             ллллллллллллллл
+  лллллллллллллллВ            млм            Вллллллллллллллл
+  ллллллллллллллллБ          ллллл          Блллллллллллллллл
+  лллллллллллллллллБ          плп          Бллллллллллллллллл
+  ллллллллллллллллллА                     Алллллллллллллллллл
+  ллллллллллллллллллл                     ллллллллллллллллллл
+  лллллллллллллллллллл                   лллллллллллллллллллл
+  ллллллллллллллллллллВ       млм       Влллллллллллллллллллл
+  лллллллллллллллллллллВ     ллллл     Вллллллллллллллллллллл
+  ллллллллллллллллллллллБ     плп     Блллллллллллллллллллллл
+  лллллллллллллллллллллллА           Аллллллллллллллллллллллл
+  лллллллллллллллллллллллл           лллллллллллллллллллллллл
+  ллллллллллллллллллллллллл         ллллллллллллллллллллллллл
+  лллллллллллллллллллллллллл       лллллллллллллллллллллллллл
+  ллллллллллллллллллллллллллл     ллллллллллллллллллллллллллл
+  лллллллллллллллллллллллллллВ   Вллллллллллллллллллллллллллл
+  ллллллллллллллллллллллллллллВ Влллллллллллллллллллллллллллл
+  лллллллллллллллллллллллллллллВллллллллллллллллллллллллллллл
+
+     лллА    лллллллллА   лллА    лллА   лллА        лллллллА
+    лллА     лллллллллА   лллА    лллА   лллА        лллллллА
+   лллА         лллА       лллА  лллА    лллА        лллА
+   лллА         лллА       лллА  лллА    лллА        лллА
+    лллА        лллА        ллВ ВллА     лллА        лллА
+     лллА       лллА        ллл лллА     лллА        лллА
+      лллА      лллА         лллллА      лллА        лллллллА
+       лллА     лллА         лллллА      лллА        лллллллА
+        лллА    лллА          лллА       лллА        лллА
+         лллА   лллА          лллА       лллА        лллА
+         лллА   лллА          лллА       лллА        лллА
+         лллА   лллА          лллА       лллА        лллА
+        лллА    лллА          лллА       лллА        лллА
+       лллА     лллА          лллА       лллА        лллА
+     ллллА      лллА          лллА       лллллллА    лллллллА
+    лллА        лллА          лллА       лллллллА    лллллллА
+
+  п ппппппппппппппппппппппппппппппппппппппппппппппппппппппп п
+     title: DirMaster v3.1.5              type: tool
+      date: March 8, 2020             platform: Win32/GUI
+  м ммммммммммммммммммммммммммммммммммммммммммммммммммммммм м
+
+
+   >> What the hell is it?
+
+     DirMaster helps Commodore enthusiasts explore
+    and manage their disk image collections. DirMaster
+    supports common (and uncommon) emulator disk image
+    formats (such as .d64, .d81, .d2m, etc), almost every
+    native Commodore archival format (such as .arc, .sda,
+    .lnx, etc), and many native graphic formats (such as
+    koala, doodle, amica, etc). DirMaster was designed to
+    give users a perfect blend of familiar appearance with
+    native-looking PETSCII directory displays and modern GUI
+    functionality (drag and drop, opening multiple disk
+    images at once). The first version of DirMaster was
+    released in 2006.
+
+
+   >> Issues submitted by users and resolved in v3.1.5:
+
+    - BAM can display a file chain for an offset file
+      depending on Show Deleted Files toggle [0200]
+      (M. Huth)
+    - allow VIC-20 BASIC files to be viewed [0201]
+      (S. Houdek)
+
+
+   >> Issues resolved due to user interest in v3.1.5:
+
+      DirMaster has supported 40 track disks since v3
+     in a limited read-only manner. Some users (most
+     recently, hedning/G*P) expressed interest in
+     better support for 40 track .d64; in response,
+     v3.1.5 resolves these issues, with more features
+     likely in a future version:
+
+    - PrologicDOS diskname and id are read from the
+      wrong location [0176]
+    - improve detection of PrologicDOS, DolphinDOS
+      and SpeedDOS [0208]
+    - blocks free doesn't account for tracks 36-40 when
+      an extended track DOS format is detected [0209]
+    - enable writing files to tracks 36-40 on
+      extended DOS format d64 [0210]
+    - extending a disk from 35 to 40 tracks should
+      initialize the extra BAM for a default
+      extended DOS (default = DolphinDOS) [0211]
+
+     Thanks to all who made an effort to submit bug
+    reports and feedback. If you sent a bug report and
+    don't see it addressed here, don't worry, it's in
+    the queue.
+
+
+   >> Other issues resolved in v3.1.5:
+
+    - Can't set a sector error to 29 [0202]
+    - a .cvt file that contained a .cvt file would
+      unarchive back to the containing .cvt [0203]
+
+
+   >> Known issues
+
+    - Some users report DirMaster font fails to render
+      correctly after running the installer. If the
+      installer instructs you to reboot, then reboot. 
+      In all other cases, you can install yourself (see
+      https://style64.org/c64-truetype).
+
+    - High DPI displays are not (yet) supported on
+      Windows 7/8.
+
+
+   >> What does the future hold?
+
+     Next release will either be 3.1.6 in a month
+    or 3.2.0 in 1-2 months. 4.0.0 is visible on the
+    horizon.
+
+
+   >> For documentation/updates visit us here:
+ 
+                https://style64.org/dirmaster
+
+
+   >> Report bugs, issues, or feature requests here:
+
+        https://style64.org/bug-report-feature-request
+
+
+  п ппппппппппппппппппппппппппппппппппппппппппппппппппппппп п
+                   Keep scene spirit alive!
+  м ммммммммммммммммммммммммммммммммммммммммммммммммммммммм м

@@ -1,0 +1,16 @@
+# This is an example script bundled with Spindle
+# https://linusakesson.net/software/spindle/
+
+1:
+spindlelogo/spindlelogo.pef	-
+music/music.pef			-
+ecmplasma/ecmplasma.pef		space
+lft/lft.pef			-
+
+# The "lft" effect will proceed normally when F1
+# is pressed, but seek to label 1 when F3 is pressed
+# (see lft/effect.s)
+
+# End with a black screen:
+
+-				stay
