@@ -1,0 +1,556 @@
+                           REGENERATOR 1.73
+                          ==================
+                              n0stalgia
+                     
+Welcome to Regenerator - an interactive disassembler for C64 binaries.
+Regenerator will load any standard C64 .PRG file (or VICE snapshot) and
+disassemble it for your convenience. There are a few options you can
+choose to change the output and a few tools to make the output look
+better and more useful to programmers. There are a few tools like this
+one out there but we thought none are really simple to use and up to the
+task, really. :)
+
+From version 1.5 any binary files can be loaded - use .bin or .rom
+extension for those files. Default address for those files will be $0000
+but you can change it with Offset: option. With .prg and .vsf files the
+loading address is automatically adjusted.
+
+Oh, and you will need .net 3.5 (or 4.0) runtime. Download from the
+Microsoft place.
+
+Regenerator makes files compatible with 64tass. The output should be
+directly compilable by that assembler. However you might need to uncheck
+the "Use Illegal Opcodes" option since 64tass chokes on illegal opcodes.
+From version 1.72 on also Kick Assembler format is supported.
+
+First thing to do is to use the "LOAD" button to load any .PRG file.
+Right away you will be presented with the initial disassembly in the
+main window of the program. You can scroll around to inspect it.
+
+The main window consists of several columns - first column is the line
+number, then is the address, then the bytes that make up the instruction,
+then the label (if any), the instruction itself and the comment.
+
+*NOTE*: The "END" address always denotes last byte+1 - so basically the
+        start of the next block of data!
+
+The following options and tools are available for you on the right side:
+
+"Load"
+   will load another .PRG program or a VICE snapshot file with .VSF
+   file extension. Any changes since last save will be lost ! Also
+   supported is the .O64 extension which has the same format as .PRG.
+   If you load a VICE snapshot then the start address will be set to
+   $0100 and the end on $10000.
+
+"Save"
+   will save the disassembly to .TAS format. This is basically a plain
+   text file, so you can also view it in other programs. Together with
+   the .TAS file there will also be a configuration file saved into the
+   "Config" directory which will contain all modifications you made to
+   the disassembly. More on this later.
+         
+"System Selection"
+   You can select a system for which the file will be disasembled. Each
+   system has its own configuration options saved and has its own labels,
+   comments and excludes files. You can add (and edit) your own Systems
+   simply by adding a new directory in Config/Systems path. When you
+   save a file the system for which it is intended is also saved in its
+   own configuration file.
+         
+"Display Top Labels"
+   if this checkbox is enabled then you will see the labels on the top
+   of the disassembly. These labels are the ones that are not referenced
+   in the disassembly itself - so they have to have their values filled.
+   There are several types of labels. By default this option is set to
+   disabled. When saving to .TAS file the labels are always saved!
+   
+"Display ASCII Values"
+   if this is enabled then (up to) three bytes that are displayed in the
+   third column will be displayed as ASCII characters (converted from
+   PETSCII format). So you can easily spot the Text in the assembly.
+   This option also does not effect the result .TAS file in any way, it
+   is just there for displaying purposes.
+   
+"Set Data"
+   before you can press this button you must select a few (or just one)
+   lines in the main window. This button will make those lines be
+   represented as data bytes (.BYTE assembler directive). If you only
+   select ONE line then only one byte of data will be chosen as .BYTE
+   content. If you select more than one line then the LAST line will
+   be the END ADDRESS + 1. Which means that the bytes in the last data
+   will not be present in the .BYTE directive ! The max number of bytes
+   per line is gotten from the next option.
+   If you have "Auto Merge" option checked then if there is a block
+   before or after this one (and of same type) then that one will be
+   merged with your current block!
+   
+   ***NOTE*** : Some data blocks might be truncated if there is an
+                instruction that overlaps with them!
+
+"Max"
+   the number in this box tells the Set Data button how many entries
+   are allowed per .BYTE line. When there are more bytes selected then
+   they will be cut into more lines.
+   
+"Set Word", "Set Lookup", "Set Hi/Lo", "Set Lo/Hi"
+   before you can press this button you must select a few (or just one)
+   lines in the main window. This button will make those lines be
+   represented as words (.WORD assembler directive). If you only
+   select ONE line then it will create a single WORD (if automerge is
+   ON then it will append it to the previous block if there is any).
+   If you select more than one line then the LAST line will
+   be the END ADDRESS + 1. Which means that the bytes in the last data
+   will not be present in the .WORD directive ! The max number of words
+   per line is gotten from the next option.
+   When using "Set Word" it will include word bytes in the table. If
+   you use "Set Lookup" it will create an address label for each of
+   the words and use that label in the table thus creating a lookup
+   table!If "stack" is checked then the table
+   will be created for stack generation. Which means each label will
+   point to the address-1 !
+   If you use the "Hi/Lo" and "Lo/Hi" buttons it will create a lookup
+   table that has in the first half the Hi (or Lo) bytes in the other
+   half the Lo (or Hi) bytes. If "stack" is checked then the table
+   will be created for stack generation. Which means each label will
+   point to the address-1 !
+   
+   If you have "Auto Merge" option checked then if there is a block
+   before or after this one (and of same type) then that one will be
+   merged with your current block!
+   
+   ***NOTE*** : Some data blocks might be truncated if there is an
+                instruction that overlaps with them!
+
+"Max"
+   the number in this box tells the Set Word button how many entries
+   are allowed per .WORD line. When there are more words selected then
+   they will be cut into more lines.
+
+"Stack"
+   if this is checked then Hi/Lo and Lo/Hi generated tables will be
+   generated so that the pointers in them point to address-1. Which
+   is how the return address used by Stack are stored.
+   
+"Set Text"
+   as with "Set Data" button this will generate .TEXT assembler
+   directive from the selected lines in the main window. Everything
+   else is the same.
+   
+   ***NOTE*** : If you generate text that is not from characters that
+                are in ASCII set then the unreadable characters will
+                be added as BYTES so it will assemble OK.
+   
+   If you want to have the block encoded in SCREEN CODES then check
+   the "Screen" checkbox and it will be encoded as such.
+
+"Screen"
+   This checkbox will enable Screen Encoding view when "Display Ascii"
+   view is enabled. And it will create a Screen encoded TEXT Block.
+   
+"Max"
+   this will tell how many chars will fit into one line when used with
+   "Set Text" button.
+
+
+   ***NOTE*** : If you want to quickly change one block to another (from
+                .BYTE to .WORD for example) you can select the WHOLE
+                block (including ONE more line) and press the button and
+                it will change to that type. You have to select the WHOLE
+                block though, otherwise it will not work.
+"Set Code"
+   this will turn the .TEXT, .BYTE and .WORD directives back to code. You
+   must be on one of the lines with .TEXT or .BYTE directive for it to
+   work. It will convert the WHOLE data or text block back to code!
+   
+"Clear All"
+   this will clear all Data and Text blocks - the whole segment will
+   be code again. It will also remove all Blank lines (more to that later).
+   
+"Merge"
+   this will Merge all blocks that are in your currently selected region
+   of the source code. Blocks must be of the same type and must follow
+   each other exactly, otherwise the merge will not be done.
+ 
+"Remove"
+   this option will REMOVE selected bytes from the source. A "* = $XXXX"
+   will be placed instead of the bytes so the compilation will properly
+   continue there.
+
+"Edit Blocks"
+   this will bring up the block editor. You will see a list of all blocks
+   that you have set for this file (Data, Text and Removed blocks). You
+   can delete a block if you want, Edit its values (make sure you enter
+   some sane numbers and that they don't OVERLAP with other blocks) or
+   make a new block "by hand".
+   
+"Auto Merge"
+   this option will enable/disable auto merging of blocks when you
+   create a text or data block right after or before an already existing
+   data/text block.
+ 
+"Start" and "End" with "Range" button
+   these will be filled with the Start address from the .PRG file and with
+   the calculated End address when you load the file. You can change them
+   to any address you choose and the program will disassemble only that
+   portion of the file. You can change the address and press ENTER or press
+   "Range" button to set the new address.
+
+"Offset" option
+   This is usefull especially when loading pure binary files (.bin or .rom)
+   that don't have any loading address in them. By default their loading
+   address will be $0000 but with the Offset: option you can change it to
+   anything you want. Code Start and End will change accordingly... you can
+   still use them that way. This option is saved per-file!
+
+"Label" and "Param" buttons
+   First button creates label on the address that selected line is on. The
+   second creates a label for the Parameter of the instruction on the
+   selected line. Both commands are availanle in the context menu.
+    
+"Side C." and "Line C."
+   These two create/Edit Side and Line Comments respectively. Both commands
+   are also available in the context menu.
+    
+"Use Illegal Opcodes"
+   if this is set then Illegal Opcodes will be generated and written to
+   the output file. Many assemblers cannot handle those so this option
+   disabled will generate .BYTE directive instead of the illegal opcodes.
+   
+"Comment Illegals"
+   if you don't want to generate illegal opcodes, but you still want to
+   know where and what they are then you can turn on this option. This
+   will make comments next to .BYTE directives telling you what that
+   instruction is.
+ 
+"Change JAM to .BYTE"
+   if Illegal Opcodes are being used then it will still use .BYTE for
+   all JAM commands.
+ 
+"Use Labels"
+   by default disassembler will try and generate labels and references
+   for you. If you disable this option that that will turn that off and 
+   everything will be disassembled as absolute values. Disassembler will
+   try and generate a few types of labels and also load some predefined
+   ones for you from labels.txt file   - more on that later.
+   
+ "Use Exclude file"
+   if you use labels then you might want a few of them not to show up as
+   labels but instead make them be absolute addresses. If this is the case
+   then you can edit the excludes.txt file with the addresses you wish to
+   exclude from being made into labels. A few ranges are already defined
+   in the file for you. You can insert single addresses or ranges.
+   
+ "Use Predefined file"
+   The file labels.txt is filled with some predefined labels for the C64
+   Kernal. If this checkbox is checked then these labels will be used in
+   the disasembly, otherwise they will be ignored. You can add your own
+   predefined labels in labels.txt file or change them as you wish.
+   
+"Use JMP/JSR Comments"
+   For certain addresses (for instance jumps into ROM) you would like to
+   know what they are. You can edit the comments.txt file and add these
+   to your liking. You can turn on/off the creation of these comments with
+   this option.
+   
+"Use Other Comments"
+   The same comments.txt file also contains addresses and comments for
+   any address that is encountered, not just for JMP/JSR. You can add your
+   own addresses in the second portion of the comments.txt file. This option
+   will turn generation of other comments on/off.
+
+"Use ~ for Long Bytes"
+   This will use the newest feature of 64tass 1.47. It will add a prefix '~'
+   to all abs, abs.x and abs.y addressing modes which go to addresses that
+   are in byte range. For example LDA $00F0 will become LDA ~$00F0 . This
+   will force the assembler to assemble these operands to WORD sizes instead
+   of Zero-Page operands.
+   
+"Kickass format"
+   Will output the assembly in Kick Assembler format instead of 64tass.
+   
+"BRK Single Byte"
+   if this is set then BRK will be treated as a single byte $00. If it is
+   not set then BRK will be treated as two bytes $00 $xx , where $xx can be
+   any byte. This is proper behaviour of 6502 but some assembler tread a
+   single $00 as BRK (64tass does too). You can still make the proper two
+   byte BRK compile with these assemblers if you use the next option.
+   
+"Patch BRK"
+   if you use a two-byte BRK ($00 $xx) then you can make the output
+   disassembly include a second line with .BYTE $xx which will make this
+   compatible with most assemblers.
+   
+"Display BIN immediates"
+   this will display a binary representation of an immediate value as
+   a comment to the right of the instruction. Very useful to see which
+   bits are turned on.
+   
+"Include Discarded Data"
+   if you manually set the "Start" and "End" address of the disassembly
+   then you will miss some of the data at the start and end of the .PRG
+   file when that portion is disassembled. With this option turned ON those
+   two portions of the data will be appended to the start and end of the
+   code as .BYTE directives.
+
+"Tabs Instead of Spaces"
+   will generate TAB stops instead of 8 spaces on the left side of the
+   disassembly. This might save some bytes in the .TAS file.
+   
+"Labels"
+   You can choose your own prefixes (up to two characters per prefix) for
+   all labels that are generated: Absolute values, Pointer (indirect)
+   values, JMP addresses, JSR (subroutine) addresses, Branch addresses,
+   External addresses (only for JMP, JSR and Branch) and fields (tables).
+   In addition you can view all your User defined Labels here and Edit
+   them. You can also add new ones and remove them from the list.
+   If you press CANCEL these changes will not take effect!
+
+"Set Font"   
+   Will let you choose your own font. Make sure you choose a fixed width
+   font or else the output will look horrible. If you click on "Default"
+   button then the default font will be used.
+
+"Search"
+   will search for a specific string that you enter from the currently
+   selected line on. You can search for the next occurrence by simply
+   pressing 'N' key while the main window is active.
+   
+"Next"
+   will search for the next occurance of the search string.
+
+"Jump To"
+   will let you jump to a specific Hex Address in the disasembly.
+   
+"Auto Data"
+   this will Auto-generate the Data (.BYTE) and text (.TEXT) blocks for
+   you from the whole code. ANY previous data and text blocks will be
+   deleted first! Any 4 or more consecutive appearances of a byte will be
+   generated as .BYTE and any 4 or more consecutive readable text
+   characters will be generated as .TEXT sequence. You can choose if you
+   want to generate only .BYTE, only .TEXT or both data types. You can
+   also specify the minimum occurance value if you want it to be something
+   else than 4.
+   
+"Save Config"
+   This will save configuration - all options. Plus it will also save
+   all the changes you made to the disassembly to the special config file.
+   
+In Addition to these options there is also a context menu in the Main
+window which lets you do the following:
+
+"Go To Reference Label" 
+   Will get the label from the opcode on selected line and Go to that
+   label in the list (if it is found).
+   
+"Toggle Bookmark" - key 'F1'
+   this will toggle the bookmark (an asterix on the left side) on the
+   currently selected line. You can move through bookmarks with next two
+   commands. If you press F1 again on the same line then this bookmark
+   will be removed. Bookmarks are lost when you load next PRG file.
+   
+"Next Bookmark" - key 'F2' and "Previous Bookmark" - key 'F3"
+   You will move to the next/previous bookmark you set. 
+   NOTE: If you change the disassembly then also the bookmarks will change
+         or be removed. They are relative to the line number and not
+         the address.
+
+"Copy Code" - key "Insert" - this will Copy selection to the Clipboard.
+   It will copy the CODE part only.
+   
+"Copy Full" - this will copy selection to the Clipboard. It will copy
+   the whole text you see including addresses and bytes of the opcodes.
+         
+"Set Start" and "Set End"
+   this will set the Start or the End address to the currently selected
+   line.
+   
+"Set Data Block" - 'D', "Set Text Block" - 'T', "Set Code Block" - 'C'
+   will do the same as the corresponding commands on the right tool bar.
+
+"Set Word Block" - 'W', "Set Lookup Block" - 'L'
+   will do the same as the corresponding commands on the right tool bar.
+   
+"Insert Blank Line" and "Remove Blank Line"
+   will insert or remove a blank line AFTER the selected line. This will
+   just add a blank line to the disassembly.
+   
+"Search String" - key 'F' and "Search Next" - key 'N'
+   same as "Search" Button. If you press 'N' it will search for next
+   occurance of the same string.
+   
+"Insert/Edit Line Comment"
+   this will add or edit a Full line comment before the currently selected
+   line.
+
+"Remove Line Comment"
+   this will remove a Full line comment on the currently selected line
+   
+"Insert/Edit Side Comment" - key "S" or Semi-Colon
+   this will add or edit a Side comment on the currently selected line.
+   NOTE: If there is any other comment on that line it will be replaced
+         by user-defined comment.
+   
+"Remove Side Comment"
+   this will remove the user Side comment on the currently selected line.
+
+"Add/Edit User Label"
+   will add or edit a user label. If you are on a valid line and there
+   is already a user label on that address there then you will edit that
+   label. Otherwise you will be presented with a new user label screen.
+   You can edit all labels inside the Labels window later.
+   
+"Add/Edit User Parameter Label"
+   will add or edit a user label for the parameter. If you are on a valid
+   line and there is already a user label in the operant's parameter there
+   then you will edit that label. Otherwise you will be presented with a
+   new user label screen.You can edit all labels inside the Labels window
+   later.
+   
+"Remove User Label"
+   if you are on a line that contains a user defined label then this one
+   will be removed.
+   
+"Remove User Parameter Label"
+   if you are on a line that contains a user defined parameter label then
+   this one will be removed.
+   
+"Add Hi/Lo Label" and "Add Lo/Hi Label"
+   This will add a User generated LDx #< and LDx #> address for you. 
+   NOTE: You must select TWO lines of the code which will be converted
+         to #< and #> type !
+          
+"Add/Remove Hi/Low Label"
+   if you are on a line which was auto generated as LDx #<address then
+   this behaviour will be disabled for the selected line (or enabled).
+   If you are on a line which has USER generated LDx #<address then it
+   will be removed (and the appropriate > address too).
+
+"Jump To Address"
+   This will let you jump to a specific Hex address in the disasembly.   
+   
+When you SAVE the .TAS file a local configuration file will also be
+generated in the "Config" directory of the program. This file will hold
+all Data, Text and Blank lines that you created in this .PRG and next
+time you load that .PRG file it will auto-load those portions so you will
+not loose your hard work!
+
+author: Tom-Cat (Tomaz Kac) - tomcat@sgn.net
+
+BIG Thanx to 6R6, S!R and also thanx to other n0s members:
+Ksubi, Slator, Antitrack, Sorex, Lemming, ... and everyone else that I
+forgot.
+
+Thanx to Daniel Hotop and Pontus Berg for extensive testing!
+
+LICENSE:
+This is a freeware program. You are not allowed to charge any money for it
+or for any media that this program is put on, otherwise you can freely
+distribute it.
+
+CHANGES:
+
+1.3: - Added REMOVE command to remove part of the data from dissasembly
+     - Added EDIT BLOCKS window to Edit all the DATA, TEXT and REMOVED
+       blocks manually.
+     - Added COPY to Clipboard functionality (insert key) with FULL
+       or CODE only modes.
+     - Added possibility to add user-defined COMMENTS to the code.
+       This can be done as a FULL line comment or as a SIDE comment !
+     - Added USER LABELS - you can now add a label to any address and
+       it will be used in the disasembly. If there should be an
+       automatic label generated for it then it will be overriden.
+       Also added USER LABELS editor which is part of the old
+       Label Prefixes window. You can add/edit and remove user labels
+       within this screen and have a general overview of the user labels.
+     - Added high and low partial references to immediate opcodes.
+       This means that code like LDX #$A0 STX smwhr LDX #$BB STX smwhr+1
+       will be disasembled as LDX #<pBBA0 STX smwhr LDX #>address STX smwhr+1.
+       This includes loads and stores in different order and with different
+       registers. There is also a context menu command that lets you disable
+       this on a currently selected address (if auto creation fails).
+       NOTE: excluded address in STA opcodes will not be generated like this!
+     - Fixed the Add BLANK LINE and Remove BLANK LINE so it actually
+       works as it should.
+1.31:- Added TAB Size selector. It is saved on per-file basis (NOT in
+       global configuration) so you need to save your file to remember it.
+	 - Fixed bug when no comments were shown on single byte opcodes if
+	   BRK Single byte option was turned on.
+1.4: - Added .WORD table generator. It is like BYTES (DATA) but generates
+       .WORD tables. It can generate pure absolute words or a LOOKUP table.
+       A Lookup table creates a label for each entry in the table.
+       Minor GUI change was needed to make this more tidy and logical.
+       There are keyboard shortcuts (W and L) and context menu entries for
+       this functionality.
+	 - TEXT blocks now generate unreadable characters as BYTES so they
+       compile OK with 64tass !     
+     - You can change block type by selecting the whole block and
+       pressing on appropriate button
+     - Bug fixes all around: Blocks could overlap under some circumstances,
+       minor ASM fixes and some minor bugs fixed.
+1.5: - Added HI/LO and LO/HI LOOKUP tables. You need to select both tables
+       (they need to be one after another) and then click the button to
+       make this type of lookup table. You can also make tables that
+       reference pointers-1 if "stack" checkbox is checked, this is for
+       return values put on stack!
+     - Added LOAD OFFSET option and loading of .bin and .rom files which are
+       pure binary files (you can rename any binary file to .bin or .rom and
+       load it into Regenerator now). When it is loaded its Address will
+       be $0000 but with the Offset: option you can change it to anything you
+       want. Code Start and End will change accordingly... you can still use
+       them that way.
+     - Added labels.txt file which includes predefined labels for C64 Kernal
+       routines. You can edit this file and change/add new labels as you wish.
+       A new option "Use Predefined file" is used to enable or disable usage
+       of these labels.
+     - "Add/Edit User Parameter Label" added to context menu (right mouse
+       click). This will add (or edit) the label of the Parameter of the
+       operant on the selected line. Very usefull to quickly add variable
+       names!
+     - Restructured the GUI so it fits on smaller screen. Also restructured
+       the context menu (right click). Added buttons for Label, Parameter
+       and Comment (Line and Side) creation.
+     - Improved keyboard handling a bit. If you use Regenerator with the
+       keybord it will not jump to the start of the assembly when you
+       generate a Data Block anymore. You can press U and P to add labels
+       for the address (or parameter) you are on.
+1.6: - Minor bug fixes with keyboard handling.
+     - The .WORD Lookup tables can now be generated for 'stack' lookups, if
+       the 'Stack' checkbox is checked when it is created, which means each
+       lookup pointer will be in format address-1.
+     - Added "Go To Reference Label" context menu option (and key shortcut
+       'G') which will get the label from the opcode on selected line and
+       Go to that label in the list (if it is found).
+     - Added "Remove Parameter Label" context menu option with which you
+       can remove the Parameter label of the opcode you have currently
+       selected.
+     - Added "Add Hi/Lo Label" and "Add Lo/Hi Label" context menu options
+       which let you define your own position where these labels are used.
+       NOTE: You must select TWO lines of the code which will be converted
+             to #< and #> type !
+     - Added "Jump To" button, context menu item and "J" key shortcut which
+       lets you jump to a specific address in the disasembly.
+1.7: - Added Multiple System support. Each System has its own configuration
+       file and all three txt files for labels, excludes and comments.
+       When you save a file then also the selected System is saved with it.
+       You can add your own Systems (with all three files) simply by
+       creating a new directory in Config/Systems path and editing the files.
+     - The JMP/JSR comments are now added also on the address that they
+       are pointing to (not just as side comments of the JMP/JSR opcode).
+     - Bug Fix: Immediate loads were replaced with labels if they were in
+       range $00 - $ff.
+1.71:- Added possibility to add/edit the side comment with the "S" or
+       the Semi-Colon key.
+     - Added checking for existing labels.
+     - Full line comments that define a sub routine are used as side
+       comments for JMP/JSR/Branch operands now.
+1.72:- Added display and saving in Kick Assembler format.
+1.73:- When setting a Datablock the position will jump to the end of the
+       created block.
+     - Added screen encoding for texts. Also the Display ASCII can display
+       in screen codes now
+     - Datablocks don't get clipped anymore to keep the previous cpu
+       instruction whole (instruction gets clipped instead now)
+     - Fixed handling of labels that fall to the end address and are inside
+       a data block not showing in the labels list
+     
